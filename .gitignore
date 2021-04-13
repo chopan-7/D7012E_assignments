@@ -1,0 +1,11 @@
+# macOS files
+.DS_Store
+
+# ignore all pdf:s
+*.pdf
+
+# haskell ide engine
+haskell-ide-engine/
+
+# vim swap files
+*.swp
