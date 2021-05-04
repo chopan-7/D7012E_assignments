@@ -92,9 +92,10 @@ instance Parse Statement where
   toString (Skip) = "skip;\n"
   toString (Begin stmts) = "begin\n" ++ (stmtToString stmts)
    where stmtToString (stmt:stmts) = "    " ++ (Expr.toString stmt) ++ (stmtToString stmts)
-         stmtToString [] = "  end\n"
+         stmtToString [] = " end\n"
 
-  toString (While stmt doWork) = "while " ++ (Expr.toString stmt) ++ " do\n  " ++ toString doWork
+  toString (While stmt doWork) = "while " ++ (Expr.toString stmt) ++ " do\n " ++ toString doWork
   toString (Read str) = "read " ++ str ++ ";\n"
-  toString (Write cond) = "write" ++ (Expr.toString cond) ++ ";\n"
+  toString (Write cond) = "write " ++ (Expr.toString cond) ++ ";\n"
+  toString (Repeat stmt cond) = "repeat\n " ++ (Expr.toString stmt) ++ "until " ++ (toString cond) ++ ";\n"
   toString _ = ""
