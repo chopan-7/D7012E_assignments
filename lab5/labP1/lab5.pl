@@ -1,4 +1,4 @@
-% LabP1: Package delivery
+%LabP1: Package delivery
 % Author: Chonratid Pangdee, chopan-7@student.ltu.se
 
 
@@ -20,8 +20,8 @@
 % Pickup, Drop, Walk
 % 
 %%%%%%%%%%%%%%%%%%%%%%%% RULES OF WALK %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% r1 <-> r2 : state(RP, _, RP, _, _, has, _)		% must have brass_key
-% r1 <-> r3 : state(RP, RP, _, _, has, _, _)		% must have steel_key
+% r1 <-> r2 : state(RP, _, RP, _, _, has, _)		% must have steel_key
+% r1 <-> r3 : state(RP, RP, _, _, has, _, _)		% must have brass_key
 
 checkMove(r1, r2, _, has).
 checkMove(r1, r3, has, _).
@@ -30,7 +30,7 @@ checkMove(r3, r1, has, _).
 
 %%%%%%%%%%%%%%%%%%%%%%% CHECK STATE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The robot cannot carry more than two items at the same time.
-invalid(state(_, _, _, _, has, has, has)).		% hands are empty
+invalid(state(_, _, _, _, has, has, has)).		% invalid state: 3 objects in hands
 checkState(State) :- not(invalid(State)).
 
 
