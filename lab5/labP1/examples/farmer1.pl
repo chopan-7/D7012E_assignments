@@ -42,4 +42,5 @@ solvefgb(State, Dest, N, Trace) :-
 temp(state(west,west,west,west)).
 start(T) :- temp(X), solvefgb(X, east, 8, T).
 
+
 % start(T).

@@ -5,7 +5,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% STATES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % state(RP, BKP, SKP, PP, HBK, HSK, HP)
 % init state: state(r1, r2, r1, r3, hasNot, hasNot, hasNot)
-% goal state: state(_, _, _, r2, _, _)
+% goal state: state(_, _, _, r2, _, _, _)
 %
 % Notations:
 % RobotPos = RP
@@ -15,14 +15,13 @@
 % HasBrassKey = HBK
 % HasSteelKey = HSK
 % HasPackagee = HP
-% ItemsInHands = IH
 %
 %%%%%%%%%%%%%%%%%%%%%%%% ACTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Pickup, Drop, Walk
 % 
 %%%%%%%%%%%%%%%%%%%%%%%% RULES OF WALK %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% r1 <-> r2 : state(RP, _, RP, _, _, has, _)
-% r1 <-> r3 : state(RP, RP, _, _, has, _, _)
+% r1 <-> r2 : state(RP, _, RP, _, _, has, _)		% must have brass_key
+% r1 <-> r3 : state(RP, RP, _, _, has, _, _)		% must have steel_key
 
 checkMove(r1, r2, _, has).
 checkMove(r1, r3, has, _).
@@ -33,6 +32,15 @@ checkMove(r3, r1, has, _).
 % The robot cannot carry more than two items at the same time.
 invalid(state(_, _, _, _, has, has, has)).		% hands are empty
 checkState(State) :- not(invalid(State)).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%% Walk %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+doMove(state(RP, BKP, SKP, PP, HBK, HSK, HP), NewState, Move) :-	% walk between rooms
+	checkMove(RP, NewRP, HBK, HSK),
+	Move = [walk, NewRP],
+	NewState = state(NewRP, BKP, SKP, PP, HBK, HSK, HP),
+	checkState(NewState).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Pickup %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,23 +68,16 @@ doMove(state(RP, BKP, SKP, _, HBK, HSK, has), NewState, Move) :-	% drop Package
 	NewState = state(RP, BKP, SKP, RP, HBK, HSK, hasNot),
 	checkState(NewState).
 
-doMove(state(RP, _, SKP, PP, has, HSK, HP), NewState, Move)  :-	% drop BrassKey
+doMove(state(RP, _, SKP, PP, has, HSK, HP), NewState, Move)  :-		% drop BrassKey
 	Move = [drop, brass_key],
   	NewState = state(RP, RP, SKP, PP, hasNot, HSK, HP),
 	checkState(NewState).
 
-doMove(state(RP, BKP, _, PP, HBK, has, HP), NewState, Move) :-	% drop SteelKey
+doMove(state(RP, BKP, _, PP, HBK, has, HP), NewState, Move) :-		% drop SteelKey
 	Move = [drop, steel_key],
   	NewState = state(RP, BKP, RP, PP, HBK, hasNot, HP),
 	checkState(NewState).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%% Walk %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-doMove(state(RP, BKP, SKP, PP, HBK, HSK, HP), NewState, Move) :-	% walk between rooms
-	checkMove(RP, NewRP, HBK, HSK),
-	Move = [walk, NewRP],
-	NewState = state(NewRP, BKP, SKP, PP, HBK, HSK, HP),
-	checkState(NewState).
 
 %%%%%%%%%%%%%%%%%%%%%%%%% solverR / test %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 solverR(state(_,_,_,r2,_,_,_), _, []).	% Solution: the package is dropped in r2.
